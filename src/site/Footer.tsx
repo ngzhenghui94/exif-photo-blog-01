@@ -58,7 +58,7 @@ export default function Footer() {
                   </>
                   : <>
                     <Link href={pathForAdminPhotos()}>
-                      Admin
+                      Admin Login
                     </Link>
                     {SHOW_REPO_LINK &&
                       <RepoLink />}
