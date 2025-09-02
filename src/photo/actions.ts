@@ -38,7 +38,7 @@ import { TAG_FAVS, isTagFavs } from '@/tag';
 import { convertPhotoToPhotoDbInsert, Photo } from '.';
 import { runAuthenticatedAdminServerAction } from '@/auth';
 import { AI_IMAGE_QUERIES, AiImageQuery } from './ai';
-import { streamOpenAiImageQuery } from '@/services/openai';
+import { streamGroqImageQuery } from '@/services/groq';
 import {
   AI_TEXT_AUTO_GENERATED_FIELDS,
   AI_TEXT_GENERATION_ENABLED,
@@ -395,7 +395,7 @@ export const streamAiImageQueryAction = async (
   query: AiImageQuery,
 ) =>
   runAuthenticatedAdminServerAction(() =>
-    streamOpenAiImageQuery(imageBase64, AI_IMAGE_QUERIES[query]));
+    streamGroqImageQuery(imageBase64, AI_IMAGE_QUERIES[query]));
 
 export const getImageBlurAction = async (url: string) =>
   runAuthenticatedAdminServerAction(() => blurImageFromUrl(url));

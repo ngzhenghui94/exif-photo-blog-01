@@ -62,11 +62,11 @@ Further customization
 
 _⚠️ READ BEFORE PROCEEDING_
 
-> _Usage of this feature will result in fees from OpenAI. When enabling AI text generation, follow all recommended mitigations in order to avoid unexpected charges and attacks. Make sure your OpenAI secret key environment variable is not prefixed with NEXT_PUBLIC._
+> _Usage of this feature may result in fees from Groq. When enabling AI text generation, follow all recommended mitigations in order to avoid unexpected charges and attacks. Make sure your Groq API key environment variable is not prefixed with NEXT_PUBLIC._
 
-1. Setup OpenAI
-   - If you don't already have one, create an [OpenAI](https://openai.com) account and fund it (see [this thread](https://github.com/sambecker/exif-photo-blog/issues/110) if you're having issues)
-   - Generate an API key and store in environment variable `OPENAI_SECRET_KEY`
+1. Setup Groq
+  - If you don't already have one, create a [Groq Cloud](https://console.groq.com) account
+  - Generate an API key and store in environment variable `GROQ_API_KEY`
    - Setup usage limits to avoid unexpected charges (_recommended_)
 2. Add rate limiting (_recommended_)
    - As an additional precaution, create a [Vercel KV](https://vercel.com/docs/storage/vercel-kv/quickstart#create-a-kv-database) store and link it to your project in order to enable rate limiting—no further configuration necessary
@@ -264,8 +264,8 @@ FAQ
 #### Why are large, multi-photo uploads not finishing?
 > The default timeout for processing multiple uploads is 60 seconds (the limit for Hobby accounts). This can be extended to 5 minutes on Pro accounts by setting `maxDuration = 300` in `src/app/admin/uploads/page.tsx`.
 
-#### I've added my OpenAI key but can't seem to make it work. Why am I seeing connection errors?
-> You may need to pre-purchase credits before accessing the OpenAI API. See [Issue #110](https://github.com/sambecker/exif-photo-blog/issues/110) for discussion.
+#### I've added my Groq key but can't seem to make it work. Why am I seeing connection errors?
+> Ensure the key has access to the selected model and that your account is active. 
 
 #### Can this template run in a docker image?
 > Possibly. See [Issue #116](https://github.com/sambecker/exif-photo-blog/issues/116) for discussion.

@@ -380,19 +380,19 @@ export default function SiteChecklistClient({
           >
             <ChecklistRow
               title={isAiTextGenerationEnabled && isTestingConnections
-                ? 'Testing OpenAI connection'
-                : 'Add OpenAI secret key'}
+                ? 'Testing Groq connection'
+                : 'Add Groq API key'}
               status={isAiTextGenerationEnabled}
               isPending={isAiTextGenerationEnabled && isTestingConnections}
               optional
             >
-              {aiError && renderError({
-                connection: { provider: 'OpenAI', error: aiError},
-              })}
-              Store your OpenAI secret key in order to add experimental support
+                {aiError && renderError({
+                  connection: { provider: 'Groq', error: aiError},
+                })}
+                Store your Groq API key in order to add experimental support
               for AI-generated text descriptions and enable an invisible field
               called {'"Semantic Description"'} used to support CMD-K search:
-              {renderEnvVars(['OPENAI_SECRET_KEY'])}
+              {renderEnvVars(['GROQ_API_KEY'])}
             </ChecklistRow>
             <ChecklistRow
               title={hasVercelKv && isTestingConnections

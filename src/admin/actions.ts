@@ -2,7 +2,7 @@
 
 import { runAuthenticatedAdminServerAction } from '@/auth';
 import { testKvConnection } from '@/services/kv';
-import { testOpenAiConnection } from '@/services/openai';
+import { testGroqConnection } from '@/services/groq';
 import { testDatabaseConnection } from '@/services/postgres';
 import { testStorageConnection } from '@/services/storage';
 import { CONFIG_CHECKLIST_STATUS } from '@/site/config';
@@ -35,7 +35,7 @@ export const testConnectionsAction = async () =>
       scanForError(hasDatabase, testDatabaseConnection),
       scanForError(hasStorageProvider, testStorageConnection),
       scanForError(hasVercelKv, testKvConnection),
-      scanForError(isAiTextGenerationEnabled, testOpenAiConnection),
+  scanForError(isAiTextGenerationEnabled, testGroqConnection),
     ]);
 
     return {
