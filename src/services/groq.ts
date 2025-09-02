@@ -10,7 +10,7 @@ import { cleanUpAiTextResponse } from '@/photo/ai';
 const RATE_LIMIT_IDENTIFIER = 'groq-image-query';
 const RATE_LIMIT_MAX_QUERIES_PER_HOUR = 100;
 // Vision model for image understanding; can be overridden in future if needed
-const MODEL = 'llama-3.2-11b-vision-preview';
+const MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 
 const groq = AI_TEXT_GENERATION_ENABLED
   ? createGroq({ apiKey: process.env.GROQ_API_KEY })
