@@ -103,8 +103,8 @@ export const testGroqConnection = async () => {
   await checkRateLimitAndBailIfNecessary();
 
   if (groq) {
-    return generateText({
-      model: groq(MODEL),
+    const args: AnyArgs = {
+      model: groq(MODEL) as AnyArgs,
       messages: [{
         'role': 'user',
         'content': [
@@ -114,6 +114,7 @@ export const testGroqConnection = async () => {
           },
         ],
       }],
-    });
+    };
+    return generateText(args as AnyArgs);
   }
 };
