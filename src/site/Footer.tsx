@@ -13,6 +13,7 @@ import { signOutAndRedirectAction } from '@/auth/actions';
 import Spinner from '@/components/Spinner';
 import AnimateItems from '@/components/AnimateItems';
 import { useAppState } from '@/state/AppState';
+import { HiOutlineHome, HiOutlineCamera, HiOutlineCalendar } from 'react-icons/hi2';
 
 export default function Footer() {
   const pathname = usePathname();
@@ -57,11 +58,49 @@ export default function Footer() {
                     </>}
                   </>
                   : <>
-                    <Link href={PATH_ADMIN_PHOTOS}>
-                      Admin
-                    </Link>
-                    {SHOW_REPO_LINK &&
-                      <RepoLink />}
+                    <div className="flex flex-col gap-2">
+                      <div className="text-sm">
+                        © {new Date().getFullYear()} Danielninetyfour. All rights reserved.
+                      </div>
+                      <div className="flex items-center gap-6">
+                        <a
+                          href="https://danielninetyfour.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Main - danielninetyfour.com"
+                          className="inline-flex items-center gap-2 hover:text-main"
+                        >
+                          <HiOutlineHome size={18} />
+                          <span>Main</span>
+                        </a>
+                        <a
+                          href="https://events.danielninetyfour.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Events - events.danielninetyfour.com"
+                          className="inline-flex items-center gap-2 hover:text-main"
+                        >
+                          <HiOutlineCalendar size={18} />
+                          <span>Events</span>
+                        </a>
+                        <a
+                          href="https://photography.danielninetyfour.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Photography - photography.danielninetyfour.com"
+                          className="inline-flex items-center gap-2 hover:text-main"
+                        >
+                          <HiOutlineCamera size={18} />
+                          <span>Photography</span>
+                        </a>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <Link href={PATH_ADMIN_PHOTOS}>
+                        Admin
+                      </Link>
+                      {SHOW_REPO_LINK && <RepoLink />}
+                    </div>
                   </>}
               </div>
               <div className="flex items-center h-10">
