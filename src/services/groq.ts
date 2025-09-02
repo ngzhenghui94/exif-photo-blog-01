@@ -40,13 +40,13 @@ const checkRateLimitAndBailIfNecessary = async () => {
   }
 };
 
+// Keep types loose to avoid provider version mismatches in transitive deps
+type AnyArgs = any;
+
 const getImageTextArgs = (
   imageBase64: string,
   query: string,
-): (
-  Parameters<typeof streamText>[0] &
-  Parameters<typeof generateText>[0]
-) | undefined => groq ? {
+): AnyArgs | undefined => groq ? {
   model: groq(MODEL),
   messages: [{
     'role': 'user',
@@ -70,7 +70,7 @@ export const streamGroqImageQuery = async (
 
   const stream = createStreamableValue('');
 
-  const args = getImageTextArgs(imageBase64, query);
+  const args = getImageTextArgs(imageBase64, query) as AnyArgs;
 
   if (args) {
     (async () => {
@@ -91,7 +91,7 @@ export const generateGroqImageQuery = async (
 ) => {
   await checkRateLimitAndBailIfNecessary();
 
-  const args = getImageTextArgs(imageBase64, query);
+  const args = getImageTextArgs(imageBase64, query) as AnyArgs;
 
   if (args) {
     return generateText(args)
