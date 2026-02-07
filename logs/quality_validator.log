@@ -1,0 +1,32 @@
+[STATUS] starting
+[INFO] Dispatching task to sub-agent (auto-gemini-3): You are Quality_Validator. Your mission is to:
+1. Verify that the Map View route is functional and correctly renders the map.
+2. Check that markers accurately reflect the GPS data found in the photos' EXIF metadata.
+3. Ensure that the new code adheres to the project's TypeScript and ESLint configurations.
+4. Validate that the Map View is responsive and doesn't introduce performance regressions during photo loading.
+5. Run existing tests (`npm test` or similar) to ensure no regressions were introduced.
+
+[SHARED STATE]
+--- task_plan.md ---
+# Task Plan (Auto-Generated)
+- [ ] Review Mission
+--- findings.md ---
+# Findings & Scratchpad
+
+Use this file to store shared knowledge, research notes, and intermediate outputs.
+--- progress.md ---
+# Mission Progress
+
+Mission: Implement a Map View for the photography app using shadcn-map. The map should visualize photos based on their EXIF GPS data. --yes
+
+## Status Log
+
+[END SHARED STATE]
+Instructions: You must read the shared state above. Update 'findings.md' with new discoveries and 'progress.md' with your status using <<WRITE_FILE>>.
+[OUTPUT] I will install the dependencies `leaflet`, `react-leaflet`, and `@types/leaflet`.
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] pnpm add leaflet react-leaflet
+[OUTPUT] pnpm add -D @types/leaflet
+[OUTPUT] <<END_COMMAND>>
+[STATUS] completed

@@ -1,0 +1,50 @@
+subagents:
+  - name: "Librarian"
+    description: "Research shadcn-map and existing GPS data handling"
+    color: "blue"
+    model: "auto-gemini-3"
+    mode: "parallel"
+    prompt: |
+      You are Librarian. Your mission is to:
+      1. Research 'shadcn-map' to understand its installation requirements and API.
+      2. Analyze the current codebase (especially `src/photo`, `src/services`, and `src/utility`) to identify how EXIF GPS data (latitude, longitude) is extracted, stored, and retrieved.
+      3. Locate the existing photo data fetching logic to determine how to efficiently query photos that have location metadata.
+      4. Provide a summary of your findings to the team.
+
+  - name: "Oracle"
+    description: "Design the Map View architecture and data strategy"
+    color: "magenta"
+    model: "auto-gemini-3"
+    mode: "parallel"
+    prompt: |
+      You are Oracle. Your mission is to:
+      1. Design the architecture for the new Map View. Propose a new route (e.g., `/map` or `/grid/map`) and determine if it should be a top-level feature.
+      2. Define a data fetching strategy for map markers. Consider how to fetch photo IDs, coordinates, and thumbnails for the map view without fetching entire photo objects if possible.
+      3. Identify if any database or service-level changes are needed to support spatial queries or to efficiently list all geotagged photos.
+      4. Ensure the design integrates seamlessly with the existing Next.js App Router structure and auth middleware.
+
+  - name: "Frontend"
+    description: "Implement the Map View UI and components"
+    color: "cyan"
+    model: "auto-gemini-3"
+    mode: "parallel"
+    prompt: |
+      You are Frontend. Your mission is to:
+      1. Install 'shadcn-map' and its dependencies if they aren't already present.
+      2. Create the Map View page and components. Use Tailwind CSS and the project's existing design tokens.
+      3. Implement the map visualization, rendering markers for photos based on their GPS coordinates.
+      4. Add interactivity: clicking a marker should show a photo preview or navigate to the photo's detail page.
+      5. Ensure the Map View supports both light and dark modes, matching the project's styling.
+
+  - name: "Quality_Validator"
+    description: "Verify the Map View implementation and data integrity"
+    color: "green"
+    model: "auto-gemini-3"
+    mode: "validator"
+    prompt: |
+      You are Quality_Validator. Your mission is to:
+      1. Verify that the Map View route is functional and correctly renders the map.
+      2. Check that markers accurately reflect the GPS data found in the photos' EXIF metadata.
+      3. Ensure that the new code adheres to the project's TypeScript and ESLint configurations.
+      4. Validate that the Map View is responsive and doesn't introduce performance regressions during photo loading.
+      5. Run existing tests (`npm test` or similar) to ensure no regressions were introduced.

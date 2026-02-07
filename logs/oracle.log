@@ -1,0 +1,231 @@
+[STATUS] starting
+[INFO] Dispatching task to sub-agent (auto-gemini-3): You are Oracle. Your mission is to:
+1. Design the architecture for the new Map View. Propose a new route (e.g., `/map` or `/grid/map`) and determine if it should be a top-level feature.
+2. Define a data fetching strategy for map markers. Consider how to fetch photo IDs, coordinates, and thumbnails for the map view without fetching entire photo objects if possible.
+3. Identify if any database or service-level changes are needed to support spatial queries or to efficiently list all geotagged photos.
+4. Ensure the design integrates seamlessly with the existing Next.js App Router structure and auth middleware.
+
+
+[SHARED STATE]
+--- task_plan.md ---
+# Task Plan (Auto-Generated)
+- [ ] Review Mission
+--- findings.md ---
+# Findings & Scratchpad
+
+Use this file to store shared knowledge, research notes, and intermediate outputs.
+--- progress.md ---
+# Mission Progress
+
+Mission: Implement a Map View for the photography app using shadcn-map. The map should visualize photos based on their EXIF GPS data. --yes
+
+## Status Log
+
+[END SHARED STATE]
+Instructions: You must read the shared state above. Update 'findings.md' with new discoveries and 'progress.md' with your status using <<WRITE_FILE>>.
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] ls -R src/photo src/app src/services
+[OUTPUT] cat package.json
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] cat src/photo/index.ts src/photo/data.ts
+[OUTPUT] ls src/photo/db
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] cat src/photo/db/query.ts src/photo/db/index.ts
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] cat src/app/page.tsx src/site/config.ts
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] grep -r "map" src/components src/app
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] search_file_content pattern="map" dir_path="src"
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] google_web_search query="shadcn-map library nextjs"
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] <<WRITE_FILE path="findings.md">>
+[OUTPUT] # Findings & Scratchpad
+[OUTPUT] 
+[OUTPUT] ## Architecture Analysis for Map View
+[OUTPUT] 
+[OUTPUT] ### Existing Architecture
+[OUTPUT] - **Framework:** Next.js 15 (App Router).
+[OUTPUT] - **Database:** Postgres (via `pg` and direct SQL queries).
+[OUTPUT] - **Photo Data:** Stored in `photos` table. Includes `latitude` and `longitude` columns.
+[OUTPUT] - **Routing:** `/` (Home), `/grid`, `/feed`, `/p/[photoId]`, `/admin`.
+[OUTPUT] - **Data Fetching:** Server Components fetch data using `src/photo/db/query.ts` and pass it to Client Components.
+[OUTPUT] - **Styling:** Tailwind CSS.
+[OUTPUT] 
+[OUTPUT] ### Proposed Architecture for Map View
+[OUTPUT] 
+[OUTPUT] 1.  **Route:** `/map`
+[OUTPUT] - Top-level route for easy access.
+[OUTPUT] - File: `src/app/map/page.tsx`.
+[OUTPUT] 
+[OUTPUT] 2.  **Data Fetching:**
+[OUTPUT] - New Query Function: `getPhotosForMap` in `src/photo/db/query.ts`.
+[OUTPUT] - **Optimization:** Select only necessary fields (`id`, `url`, `latitude`, `longitude`, `taken_at_naive`, `aspect_ratio`) to minimize payload.
+[OUTPUT] - **Filtering:** `WHERE hidden IS NOT TRUE AND latitude IS NOT NULL AND longitude IS NOT NULL`.
+[OUTPUT] 
+[OUTPUT] 3.  **Map Implementation (shadcn-map / React Leaflet):**
+[OUTPUT] - **Dependencies:** `leaflet`, `react-leaflet`, `@types/leaflet`.
+[OUTPUT] - **Component:** `src/components/Map.tsx` (Client Component).
+[OUTPUT] - **UI/UX:**
+[OUTPUT] - Full-screen or large container map.
+[OUTPUT] - Markers for each photo.
+[OUTPUT] - Popups showing a thumbnail (`url`), title/date, and link to `/p/[photoId]`.
+[OUTPUT] - **Integration:** "shadcn-map" suggests a specific styling/component structure. We will implement a map component using `react-leaflet` that aligns with the project's design system (Tailwind).
+[OUTPUT] 
+[OUTPUT] 4.  **Integration Points:**
+[OUTPUT] - **Navigation:** Add "Map" link to the main navigation (likely in `src/components/SiteGrid.tsx` or `src/photo/PhotoGridSidebar.tsx`).
+[OUTPUT] - **Middleware:** Ensure `/map` is publicly accessible (similar to `/grid`).
+[OUTPUT] 
+[OUTPUT] 5.  **Dependencies to Install:**
+[OUTPUT] - `leaflet`
+[OUTPUT] - `react-leaflet`
+[OUTPUT] - `@types/leaflet`
+[OUTPUT] 
+[OUTPUT] ### Questions / Risky Assumptions
+[OUTPUT] - **Clustering:** If there are thousands of photos, we might need `react-leaflet-cluster`. For V1, we will start without it or simple marker rendering.
+[OUTPUT] - **Map Tiles:** We need a tile provider. OpenStreetMap (OSM) is free but requires attribution. Mapbox requires a key. We'll default to OSM for the prototype.
+[OUTPUT] 
+[OUTPUT] <<END_WRITE>>
+[OUTPUT] 
+[OUTPUT] <<WRITE_FILE path="progress.md">>
+[OUTPUT] # Mission Progress
+[OUTPUT] 
+[OUTPUT] Mission: Implement a Map View for the photography app using shadcn-map. The map should visualize photos based on their EXIF GPS data.
+[OUTPUT] 
+[OUTPUT] ## Status Log
+[OUTPUT] - **[Date]**: Started mission. Analyzed codebase and identified `photos` table has geospatial data (`latitude`, `longitude`).
+[OUTPUT] - **[Date]**: Proposed architecture: `/map` route, `getPhotosForMap` query, and `react-leaflet` implementation.
+[OUTPUT] - **[Date]**: Next steps: Create the map page and components.
+[OUTPUT] 
+[OUTPUT] ## Checklist
+[OUTPUT] - [x] Analyze codebase for geospatial data availability.
+[OUTPUT] - [ ] Design Map View Architecture. (Completed in findings.md)
+[OUTPUT] - [ ] Create `getPhotosForMap` query in `src/photo/db/query.ts`.
+[OUTPUT] - [ ] Install dependencies (`leaflet`, `react-leaflet`, `@types/leaflet`).
+[OUTPUT] - [ ] Create `Map` component (`src/components/Map.tsx`).
+[OUTPUT] - [ ] Create `/map` page (`src/app/map/page.tsx`).
+[OUTPUT] - [ ] Add Map link to navigation.
+[OUTPUT] - [ ] Verify functionality.
+[OUTPUT] <<END_WRITE>>
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] ls -la
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] <<WRITE_FILE path="findings.md">>
+[OUTPUT] # Findings & Scratchpad
+[OUTPUT] 
+[OUTPUT] ## Architecture Analysis for Map View
+[OUTPUT] 
+[OUTPUT] ### Existing Architecture
+[OUTPUT] - **Framework:** Next.js 15 (App Router).
+[OUTPUT] - **Database:** Postgres (via `pg` and direct SQL queries).
+[OUTPUT] - **Photo Data:** Stored in `photos` table. Includes `latitude` and `longitude` columns.
+[OUTPUT] - **Routing:** `/` (Home), `/grid`, `/feed`, `/p/[photoId]`, `/admin`.
+[OUTPUT] - **Data Fetching:** Server Components fetch data using `src/photo/db/query.ts` and pass it to Client Components.
+[OUTPUT] - **Styling:** Tailwind CSS.
+[OUTPUT] 
+[OUTPUT] ### Proposed Architecture for Map View
+[OUTPUT] 
+[OUTPUT] 1.  **Route:** `/map`
+[OUTPUT] - Top-level route for easy access.
+[OUTPUT] - File: `src/app/map/page.tsx`.
+[OUTPUT] 
+[OUTPUT] 2.  **Data Fetching:**
+[OUTPUT] - New Query Function: `getPhotosForMap` in `src/photo/db/query.ts`.
+[OUTPUT] - **Optimization:** Select only necessary fields (`id`, `url`, `latitude`, `longitude`, `taken_at_naive`, `aspect_ratio`) to minimize payload.
+[OUTPUT] - **Filtering:** `WHERE hidden IS NOT TRUE AND latitude IS NOT NULL AND longitude IS NOT NULL`.
+[OUTPUT] 
+[OUTPUT] 3.  **Map Implementation (shadcn-map / React Leaflet):**
+[OUTPUT] - **Dependencies:** `leaflet`, `react-leaflet`, `@types/leaflet`.
+[OUTPUT] - **Component:** `src/components/Map.tsx` (Client Component).
+[OUTPUT] - **UI/UX:**
+[OUTPUT] - Full-screen or large container map.
+[OUTPUT] - Markers for each photo.
+[OUTPUT] - Popups showing a thumbnail (`url`), title/date, and link to `/p/[photoId]`.
+[OUTPUT] - **Integration:** "shadcn-map" suggests a specific styling/component structure. We will implement a map component using `react-leaflet` that aligns with the project's design system (Tailwind).
+[OUTPUT] 
+[OUTPUT] 4.  **Integration Points:**
+[OUTPUT] - **Navigation:** Add "Map" link to the main navigation (likely in `src/components/SiteGrid.tsx` or `src/photo/PhotoGridSidebar.tsx`).
+[OUTPUT] - **Middleware:** Ensure `/map` is publicly accessible (similar to `/grid`).
+[OUTPUT] 
+[OUTPUT] 5.  **Dependencies to Install:**
+[OUTPUT] - `leaflet`
+[OUTPUT] - `react-leaflet`
+[OUTPUT] - `@types/leaflet`
+[OUTPUT] 
+[OUTPUT] ### Questions / Risky Assumptions
+[OUTPUT] - **Clustering:** If there are thousands of photos, we might need `react-leaflet-cluster`. For V1, we will start without it or simple marker rendering.
+[OUTPUT] - **Map Tiles:** We need a tile provider. OpenStreetMap (OSM) is free but requires attribution. Mapbox requires a key. We'll default to OSM for the prototype.
+[OUTPUT] <<END_WRITE>>
+[OUTPUT] 
+[OUTPUT] <<WRITE_FILE path="progress.md">>
+[OUTPUT] # Mission Progress
+[OUTPUT] 
+[OUTPUT] Mission: Implement a Map View for the photography app using shadcn-map. The map should visualize photos based on their EXIF GPS data.
+[OUTPUT] 
+[OUTPUT] ## Status Log
+[OUTPUT] - **[Date]**: Started mission. Analyzed codebase and identified `photos` table has geospatial data (`latitude`, `longitude`).
+[OUTPUT] - **[Date]**: Proposed architecture: `/map` route, `getPhotosForMap` query, and `react-leaflet` implementation.
+[OUTPUT] - **[Date]**: Next steps: Create the map page and components.
+[OUTPUT] 
+[OUTPUT] ## Checklist
+[OUTPUT] - [x] Analyze codebase for geospatial data availability.
+[OUTPUT] - [x] Design Map View Architecture. (Completed in findings.md)
+[OUTPUT] - [ ] Create `getPhotosForMap` query in `src/photo/db/query.ts`.
+[OUTPUT] - [ ] Install dependencies (`leaflet`, `react-leaflet`, `@types/leaflet`).
+[OUTPUT] - [ ] Create `Map` component (`src/components/Map.tsx`).
+[OUTPUT] - [ ] Create `/map` page (`src/app/map/page.tsx`).
+[OUTPUT] - [ ] Add Map link to navigation.
+[OUTPUT] - [ ] Verify functionality.
+[OUTPUT] <<END_WRITE>>
+[OUTPUT] The architecture design for the Map View is complete.
+[OUTPUT] 
+[OUTPUT] ### 1. Route Configuration
+[OUTPUT] **Proposed Route:** `/map`
+[OUTPUT] - **Type:** Top-level route.
+[OUTPUT] - **Path:** `src/app/map/page.tsx`
+[OUTPUT] - **Justification:** The map is a significant feature (like `/grid`) and deserves a dedicated URL. It will be publicly accessible.
+[OUTPUT] 
+[OUTPUT] ### 2. Data Fetching Strategy
+[OUTPUT] **Strategy:** Server-side fetching with a specialized query.
+[OUTPUT] - **New Query Function:** `getPhotosForMap()` to be added in `src/photo/db/query.ts`.
+[OUTPUT] - **Selected Fields:**
+[OUTPUT] - `id` (for linking)
+[OUTPUT] - `url` (for thumbnail)
+[OUTPUT] - `latitude` (for positioning)
+[OUTPUT] - `longitude` (for positioning)
+[OUTPUT] - `taken_at_naive` (for sorting/display)
+[OUTPUT] - `aspect_ratio` (for correct thumbnail display)
+[OUTPUT] - **Filtering:** `WHERE hidden IS NOT TRUE AND latitude IS NOT NULL AND longitude IS NOT NULL`.
+[OUTPUT] - **Reasoning:** Fetching only these fields drastically reduces the payload size compared to fetching full `Photo` objects, which is crucial for a map that might load hundreds of markers.
+[OUTPUT] 
+[OUTPUT] ### 3. Database / Service Changes
+[OUTPUT] - **Schema Changes:** None required. The `photos` table already contains `latitude` and `longitude` columns (verified in `src/photo/db/query.ts`).
+[OUTPUT] - **Service Changes:** None.
+[OUTPUT] - **Code Changes:**
+[OUTPUT] - Update `src/photo/db/query.ts` to include `getPhotosForMap`.
+[OUTPUT] - Create `src/app/map/page.tsx` and `src/components/Map.tsx`.
+[OUTPUT] 
+[OUTPUT] ### 4. Integration & Implementation Details
+[OUTPUT] - **Libraries:**
+[OUTPUT] - `leaflet`: Core mapping library.
+[OUTPUT] - `react-leaflet`: React components for Leaflet.
+[OUTPUT] - `@types/leaflet`: TypeScript definitions.
+[OUTPUT] - **Component Structure:**
+[OUTPUT] - **`src/app/map/page.tsx`**: Server component. Fetches data using `getPhotosForMap`. Passes data to `MapClient`.
+[OUTPUT] - **`src/app/map/MapClient.tsx`** (or `src/components/Map.tsx`): Client component. Renders the `MapContainer`, `TileLayer`, and `Marker`s. Handles popup interactions.
+[OUTPUT] - **Auth/Middleware:** The `/map` route will be public, similar to `/grid`. No specific middleware changes needed unless geo-privacy features are active (checked via `GEO_PRIVACY_ENABLED` in `src/site/config.ts`).
+[OUTPUT] 
+[OUTPUT] ### Action Plan
+[OUTPUT] 1.  **Install Dependencies:** `npm install leaflet react-leaflet @types/leaflet`
+[OUTPUT] 2.  **Backend:** Implement `getPhotosForMap` in `src/photo/db/query.ts`.
+[OUTPUT] 3.  **Frontend:** Create the Map component and Page.
+[OUTPUT] 4.  **UI:** Add a "Map" link to the site navigation.
+[STATUS] completed

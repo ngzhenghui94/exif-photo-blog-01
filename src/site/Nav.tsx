@@ -12,6 +12,7 @@ import {
   isPathGrid,
   isPathProtected,
   isPathSignIn,
+  isPathMap,
 } from '@/site/paths';
 import AnimateItems from '../components/AnimateItems';
 import { useAppState } from '@/state/AppState';
@@ -52,6 +53,8 @@ export default function Nav({
       return 'grid';
     } else if (isPathFeed(pathname)) {
       return 'feed';
+    } else if (isPathMap(pathname)) {
+      return 'map';
     } else if (isPathProtected(pathname)) {
       return 'admin';
     }

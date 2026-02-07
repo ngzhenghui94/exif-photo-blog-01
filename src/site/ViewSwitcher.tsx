@@ -6,13 +6,14 @@ import {
   PATH_ADMIN_PHOTOS,
   PATH_FEED_INFERRED,
   PATH_GRID_INFERRED,
+  PATH_MAP,
 } from '@/site/paths';
-import { BiLockAlt } from 'react-icons/bi';
+import { BiLockAlt, BiMap } from 'react-icons/bi';
 import IconSearch from './IconSearch';
 import { useAppState } from '@/state/AppState';
 import { GRID_HOMEPAGE_ENABLED } from './config';
 
-export type SwitcherSelection = 'feed' | 'grid' | 'admin';
+export type SwitcherSelection = 'feed' | 'grid' | 'map' | 'admin';
 
 export default function ViewSwitcher({
   currentSelection,
@@ -39,11 +40,20 @@ export default function ViewSwitcher({
       noPadding
     />;
 
+  const renderItemMap = () =>
+    <SwitcherItem
+      icon={<BiMap size={18} />}
+      href={PATH_MAP}
+      active={currentSelection === 'map'}
+      noPadding
+    />;
+
   return (
     <div className="flex gap-1 sm:gap-2">
       <Switcher>
         {GRID_HOMEPAGE_ENABLED ? renderItemGrid() : renderItemFeed()}
         {GRID_HOMEPAGE_ENABLED ? renderItemFeed() : renderItemGrid()}
+        {renderItemMap()}
         {showAdmin &&
           <SwitcherItem
             icon={<BiLockAlt size={16} className="translate-y-[-0.5px]" />}

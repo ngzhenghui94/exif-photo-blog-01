@@ -1,0 +1,59 @@
+[STATUS] starting
+[INFO] Dispatching task to sub-agent (auto-gemini-3): You are Librarian. Your mission is to:
+1. Research 'shadcn-map' to understand its installation requirements and API.
+2. Analyze the current codebase (especially `src/photo`, `src/services`, and `src/utility`) to identify how EXIF GPS data (latitude, longitude) is extracted, stored, and retrieved.
+3. Locate the existing photo data fetching logic to determine how to efficiently query photos that have location metadata.
+4. Provide a summary of your findings to the team.
+
+
+[SHARED STATE]
+--- task_plan.md ---
+# Task Plan (Auto-Generated)
+- [ ] Review Mission
+--- findings.md ---
+# Findings & Scratchpad
+
+Use this file to store shared knowledge, research notes, and intermediate outputs.
+--- progress.md ---
+# Mission Progress
+
+Mission: Implement a Map View for the photography app using shadcn-map. The map should visualize photos based on their EXIF GPS data. --yes
+
+## Status Log
+
+[END SHARED STATE]
+Instructions: You must read the shared state above. Update 'findings.md' with new discoveries and 'progress.md' with your status using <<WRITE_FILE>>.
+[OUTPUT] I will start by researching 'shadcn-map' and analyzing the codebase for GPS data handling.
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] ls -R src/photo
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] grep -rE "GPS|latitude|longitude" src/photo src/utility src/services
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] cat package.json
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] grep -r "GPS" src/utility/exif.ts
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] 
+[OUTPUT] I will also perform a web search to clarify "shadcn-map".
+[OUTPUT] I will list the files in `src/photo` and search for GPS-related terms in the codebase to understand how location data is currently handled.
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] ls -R src/photo
+[OUTPUT] grep -rE "GPS|latitude|longitude" src/photo src/utility src/services
+[OUTPUT] cat package.json
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] I will list the files in `src/photo` and search for GPS-related terms in the codebase to understand how location data is currently handled.
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] ls -R src/photo
+[OUTPUT] grep -rE "GPS|latitude|longitude" src/photo src/utility src/services
+[OUTPUT] cat package.json
+[OUTPUT] <<END_COMMAND>>
+[STATUS] completed
