@@ -229,3 +229,45 @@ Instructions: You must read the shared state above. Update 'findings.md' with ne
 [OUTPUT] 3.  **Frontend:** Create the Map component and Page.
 [OUTPUT] 4.  **UI:** Add a "Map" link to the site navigation.
 [STATUS] completed
+[STATUS] starting
+[INFO] Dispatching task to sub-agent (auto-gemini-3): You are Oracle.
+Your goal is to analyze the existing map implementation in `src/components/Map.tsx`, `src/components/MapClient.tsx`, and how data is fetched.
+1. Identify the map library being used (e.g., Leaflet, Mapbox, Google Maps).
+2. Determine the best approach to implement **marker clustering**.
+3. Analyze the data fetching mechanism to determine how to implement **infinite scroll or pagination** (breaking the 1000 limit).
+4. Locate the Popup component and suggest schema/prop changes for enhanced metadata.
+Output a technical plan for the Frontend agent.
+
+
+[SHARED STATE]
+--- task_plan.md ---
+# Task Plan
+- [ ] Analyze current Map implementation (Oracle)
+- [ ] Design clustering strategy (Oracle)
+- [ ] Design pagination/infinite scroll strategy (Oracle)
+- [ ] Implement marker clustering (Frontend)
+- [ ] Implement pagination/infinite scroll (Frontend)
+- [ ] Enhance popup UI with metadata (Frontend)
+- [ ] Verify clustering and performance (Quality_Validator)
+- [ ] Verify pagination and data loading (Quality_Validator)
+- [ ] Verify popup UI details (Quality_Validator)
+--- findings.md ---
+# Findings & Scratchpad
+
+Use this file to store shared knowledge, research notes, and intermediate outputs.
+--- progress.md ---
+# Mission Progress
+
+Mission: Improve the Map View feature: 1. Add marker clustering for better performance. 2. Implement infinite scroll or pagination for map data (since we currently limit to 1000). 3. Enhance popup UI with more metadata. 4. Verify all changes. --yes
+
+## Status Log
+
+[END SHARED STATE]
+Instructions: You must read the shared state above. Update 'findings.md' with new discoveries and 'progress.md' with your status using <<WRITE_FILE>>.
+[OUTPUT] I will start by analyzing the project dependencies and the map component files to understand the current implementation.
+[OUTPUT] 
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] ls -F src/components/Map.tsx src/components/MapClient.tsx
+[OUTPUT] cat package.json
+[OUTPUT] <<END_COMMAND>>
+[STATUS] completed

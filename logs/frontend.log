@@ -210,3 +210,268 @@ Instructions: You must read the shared state above. Update 'findings.md' with ne
 [OUTPUT] }
 [OUTPUT] <<END_WRITE>>
 [STATUS] completed
+[STATUS] starting
+[INFO] Dispatching task to sub-agent (auto-gemini-3): You are Frontend.
+Based on the codebase and the plan (if provided), implement the following:
+1. **Marker Clustering:** Update the Map component to cluster markers when zoomed out.
+2. **Pagination/Infinite Scroll:** Refactor the data fetching in `MapClient.tsx` (or relevant file) to load data in chunks as the user interacts or scrolls, removing the hard 1000 limit.
+3. **Enhanced Popup:** Update the map popup to display more metadata (e.g., date, camera settings, tags) alongside the photo.
+Ensure you maintain existing styling conventions and responsive design.
+
+
+[SHARED STATE]
+--- task_plan.md ---
+# Task Plan
+- [ ] Analyze current Map implementation (Oracle)
+- [ ] Design clustering strategy (Oracle)
+- [ ] Design pagination/infinite scroll strategy (Oracle)
+- [ ] Implement marker clustering (Frontend)
+- [ ] Implement pagination/infinite scroll (Frontend)
+- [ ] Enhance popup UI with metadata (Frontend)
+- [ ] Verify clustering and performance (Quality_Validator)
+- [ ] Verify pagination and data loading (Quality_Validator)
+- [ ] Verify popup UI details (Quality_Validator)
+--- findings.md ---
+# Findings & Scratchpad
+
+Use this file to store shared knowledge, research notes, and intermediate outputs.
+--- progress.md ---
+# Mission Progress
+
+Mission: Improve the Map View feature: 1. Add marker clustering for better performance. 2. Implement infinite scroll or pagination for map data (since we currently limit to 1000). 3. Enhance popup UI with more metadata. 4. Verify all changes. --yes
+
+## Status Log
+
+[END SHARED STATE]
+Instructions: You must read the shared state above. Update 'findings.md' with new discoveries and 'progress.md' with your status using <<WRITE_FILE>>.
+[OUTPUT] <<RUN_COMMAND>>
+[OUTPUT] mkdir -p src/app/api/photos
+[OUTPUT] <<END_COMMAND>>
+[OUTPUT] 
+[OUTPUT] <<WRITE_FILE path="src/app/api/photos/route.ts">>
+[OUTPUT] import { getPhotosCached } from '@/photo/cache';
+[OUTPUT] import { NextResponse } from 'next/server';
+[OUTPUT] 
+[OUTPUT] export const dynamic = 'force-dynamic';
+[OUTPUT] 
+[OUTPUT] export async function GET(request: Request) {
+[OUTPUT] const { searchParams } = new URL(request.url);
+[OUTPUT] const limit = parseInt(searchParams.get('limit') || '100', 10);
+[OUTPUT] const offset = parseInt(searchParams.get('offset') || '0', 10);
+[OUTPUT] 
+[OUTPUT] // Fetch photos with location data (hidden='exclude' is default in getPhotosCached but good to be explicit if needed)
+[OUTPUT] // We rely on the cache to be efficient.
+[OUTPUT] const photos = await getPhotosCached({ limit, offset, hidden: 'exclude' });
+[OUTPUT] 
+[OUTPUT] return NextResponse.json({ photos });
+[OUTPUT] }
+[OUTPUT] <<END_WRITE>>
+[OUTPUT] 
+[OUTPUT] <<WRITE_FILE path="findings.md">>
+[OUTPUT] # Findings & Scratchpad
+[OUTPUT] 
+[OUTPUT] Use this file to store shared knowledge, research notes, and intermediate outputs.
+[OUTPUT] 
+[OUTPUT] - **Map Implementation**: Currently fetches 1000 photos server-side.
+[OUTPUT] - **Clustering**: `react-leaflet-cluster` is not available. Will implement a custom client-side clustering using a grid-based or distance-based approach within the `Map` component to avoid adding dependencies.
+[OUTPUT] - **Pagination**: Created `/api/photos` to fetch photos in chunks. `Map` component will consume this to load more data progressively.
+[OUTPUT] - **Popup**: Will enhance with `takenAt`, `focalLength`, `fNumber`, `iso`, and `tags`.
+[OUTPUT] <<END_WRITE>>
+[OUTPUT] 
+[OUTPUT] <<WRITE_FILE path="progress.md">>
+[OUTPUT] # Mission Progress
+[OUTPUT] 
+[OUTPUT] Mission: Improve the Map View feature: 1. Add marker clustering for better performance. 2. Implement infinite scroll or pagination for map data (since we currently limit to 1000). 3. Enhance popup UI with more metadata. 4. Verify all changes. --yes
+[OUTPUT] 
+[OUTPUT] ## Status Log
+[OUTPUT] - Analyzed existing Map component and data fetching.
+[OUTPUT] - Created `/api/photos` endpoint for paginated data fetching.
+[OUTPUT] - **Next**: Refactor `src/components/Map.tsx` to implement clustering and progressive data loading.
+[OUTPUT] <<END_WRITE>>
+[OUTPUT] <<WRITE_FILE path="src/components/Map.tsx">>
+[OUTPUT] 'use client';
+[OUTPUT] 
+[OUTPUT] import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+[OUTPUT] import 'leaflet/dist/leaflet.css';
+[OUTPUT] import { Photo } from '@/photo';
+[OUTPUT] import { useEffect, useState, useMemo, useRef } from 'react';
+[OUTPUT] import { useTheme } from 'next-themes';
+[OUTPUT] import L from 'leaflet';
+[OUTPUT] import Image from 'next/image';
+[OUTPUT] import Link from 'next/link';
+[OUTPUT] import { pathForPhoto } from '@/site/paths';
+[OUTPUT] import { formatDate } from '@/utility/date';
+[OUTPUT] 
+[OUTPUT] // Standard marker icon
+[OUTPUT] const icon = L.divIcon({
+[OUTPUT] className: 'map-marker',
+[OUTPUT] html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-red-500 drop-shadow-md">
+[OUTPUT] <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+[OUTPUT] </svg>`,
+[OUTPUT] iconSize: [32, 32],
+[OUTPUT] iconAnchor: [16, 32],
+[OUTPUT] popupAnchor: [0, -32],
+[OUTPUT] });
+[OUTPUT] 
+[OUTPUT] // Cluster marker icon generator
+[OUTPUT] const createClusterIcon = (count: number) => L.divIcon({
+[OUTPUT] className: 'map-marker-cluster',
+[OUTPUT] html: `<div class="flex items-center justify-center w-8 h-8 bg-red-500 text-white rounded-full font-bold shadow-md border-2 border-white dark:border-gray-900 text-xs">
+[OUTPUT] ${count > 99 ? '99+' : count}
+[OUTPUT] </div>`,
+[OUTPUT] iconSize: [32, 32],
+[OUTPUT] iconAnchor: [16, 16],
+[OUTPUT] });
+[OUTPUT] 
+[OUTPUT] interface MapProps {
+[OUTPUT] photos: Photo[];
+[OUTPUT] }
+[OUTPUT] 
+[OUTPUT] interface Cluster {
+[OUTPUT] id: string;
+[OUTPUT] latitude: number;
+[OUTPUT] longitude: number;
+[OUTPUT] photos: Photo[];
+[OUTPUT] isCluster: true;
+[OUTPUT] }
+[OUTPUT] 
+[OUTPUT] type MapItem = Photo | Cluster;
+[OUTPUT] 
+[OUTPUT] function MapContent({ photos, theme }: { photos: Photo[], theme: string | undefined }) {
+[OUTPUT] const map = useMap();
+[OUTPUT] const [clusters, setClusters] = useState<MapItem[]>([]);
+[OUTPUT] 
+[OUTPUT] // Update map style when theme changes
+[OUTPUT] useEffect(() => {
+[OUTPUT] map.invalidateSize();
+[OUTPUT] }, [map, theme]);
+[OUTPUT] 
+[OUTPUT] // Clustering logic
+[OUTPUT] const updateClusters = useMemo(() => {
+[OUTPUT] return () => {
+[OUTPUT] const zoom = map.getZoom();
+[OUTPUT] const bounds = map.getBounds();
+[OUTPUT] const visiblePhotos = photos.filter(p =>
+[OUTPUT] p.latitude !== null && p.longitude !== null &&
+[OUTPUT] bounds.contains([p.latitude!, p.longitude!])
+[OUTPUT] );
+[OUTPUT] 
+[OUTPUT] // Simple grid/distance-based clustering
+[OUTPUT] // Project points to pixel coordinates at current zoom
+[OUTPUT] // If distance < threshold, group them.
+[OUTPUT] 
+[OUTPUT] const threshold = 60; // pixels
+[OUTPUT] const newClusters: MapItem[] = [];
+[OUTPUT] const processed = new Set<string>();
+[OUTPUT] 
+[OUTPUT] // We prioritize showing individual markers if possible, or group them.
+[OUTPUT] // This is a naive O(N^2) implementation on visible photos.
+[OUTPUT] // For thousands of photos, we might want a spatial index, but for visible photos it might be okay.
+[OUTPUT] 
+[OUTPUT] // Optimization: First sort by latitude to potentially reduce checks?
+[OUTPUT] // Or just iterate.
+[OUTPUT] 
+[OUTPUT] for (const photo of visiblePhotos) {
+[OUTPUT] if (processed.has(photo.id)) continue;
+[OUTPUT] 
+[OUTPUT] const point = map.project([photo.latitude!, photo.longitude!], zoom);
+[OUTPUT] const clusterPhotos: Photo[] = [photo];
+[OUTPUT] processed.add(photo.id);
+[OUTPUT] 
+[OUTPUT] // Look for neighbors
+[OUTPUT] for (const other of visiblePhotos) {
+[OUTPUT] if (processed.has(other.id)) continue;
+[OUTPUT] 
+[OUTPUT] const otherPoint = map.project([other.latitude!, other.longitude!], zoom);
+[OUTPUT] const dist = point.distanceTo(otherPoint);
+[OUTPUT] 
+[OUTPUT] if (dist < threshold) {
+[OUTPUT] clusterPhotos.push(other);
+[OUTPUT] processed.add(other.id);
+[OUTPUT] }
+[OUTPUT] }
+[OUTPUT] 
+[OUTPUT] if (clusterPhotos.length > 1) {
+[OUTPUT] newClusters.push({
+[OUTPUT] id: `cluster-${photo.id}`,
+[OUTPUT] latitude: photo.latitude!,
+[OUTPUT] longitude: photo.longitude!,
+[OUTPUT] photos: clusterPhotos,
+[OUTPUT] isCluster: true,
+[OUTPUT] });
+[OUTPUT] } else {
+[OUTPUT] newClusters.push(photo);
+[OUTPUT] }
+[OUTPUT] }
+[OUTPUT] 
+[OUTPUT] setClusters(newClusters);
+[OUTPUT] };
+[OUTPUT] }, [map, photos]);
+[OUTPUT] 
+[OUTPUT] // Re-cluster on move/zoom
+[OUTPUT] useMapEvents({
+[OUTPUT] moveend: updateClusters,
+[OUTPUT] zoomend: updateClusters,
+[OUTPUT] });
+[OUTPUT] 
+[OUTPUT] // Initial cluster calculation
+[OUTPUT] useEffect(() => {
+[OUTPUT] updateClusters();
+[OUTPUT] }, [updateClusters]);
+[OUTPUT] 
+[OUTPUT] return (
+[OUTPUT] <>
+[OUTPUT] {clusters.map((item) => {
+[OUTPUT] if ('isCluster' in item) {
+[OUTPUT] // Cluster Marker
+[OUTPUT] return (
+[OUTPUT] <Marker
+[OUTPUT] key={item.id}
+[OUTPUT] position={[item.latitude, item.longitude]}
+[OUTPUT] icon={createClusterIcon(item.photos.length)}
+[OUTPUT] eventHandlers={{
+[OUTPUT] click: () => {
+[OUTPUT] // Zoom in on cluster
+[OUTPUT] map.flyTo([item.latitude, item.longitude], map.getZoom() + 2);
+[OUTPUT] }
+[OUTPUT] }}
+[OUTPUT] />
+[OUTPUT] );
+[OUTPUT] } else {
+[OUTPUT] // Single Photo Marker
+[OUTPUT] const photo = item as Photo;
+[OUTPUT] return (
+[OUTPUT] <Marker
+[OUTPUT] key={photo.id}
+[OUTPUT] position={[photo.latitude!, photo.longitude!]}
+[OUTPUT] icon={icon}
+[OUTPUT] >
+[OUTPUT] <Popup className="min-w-[200px] photo-popup">
+[OUTPUT] <div className="flex flex-col gap-2">
+[OUTPUT] <Link href={pathForPhoto({ photo })} className="block w-[200px] aspect-[1.5] relative bg-gray-100 dark:bg-gray-800 rounded-sm overflow-hidden">
+[OUTPUT] <Image
+[OUTPUT] src={photo.url}
+[OUTPUT] alt={photo.title || 'Photo'}
+[OUTPUT] fill
+[OUTPUT] sizes="200px"
+[OUTPUT] className="object-cover"
+[OUTPUT] />
+[OUTPUT] </Link>
+[OUTPUT] <div className="flex flex-col gap-1">
+[OUTPUT] <Link href={pathForPhoto({ photo })} className="font-medium hover:underline text-sm truncate">
+[OUTPUT] {photo.title || 'Untitled'}
+[OUTPUT] </Link>
+[OUTPUT] <div className="text-xs text-gray-500 space-y-0.5">
+[OUTPUT] <div className="flex items-center gap-1">
+[OUTPUT] <span className="opacity-75">📅</span>
+[OUTPUT] <span>{photo.takenAtNaiveFormatted}</span>
+[OUTPUT] </div>
+[OUTPUT] {(photo.focalLengthFormatted || photo.fNumberFormatted) && (
+[OUTPUT] <div className="flex items-center gap-1">
+[OUTPUT] <span className="opacity-75">📷</span>
+[OUTPUT] <span>
+[OUTPUT] {[
+[OUTPUT] photo.make,
+[OUTPUT] photo.model,
+[OUTPUT] photo.focalLengthFormatted,
+[STATUS] completed
