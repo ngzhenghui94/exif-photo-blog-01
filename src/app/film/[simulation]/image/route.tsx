@@ -12,9 +12,9 @@ import { getImageResponseCacheControlHeaders } from '@/image-response/cache';
 
 export async function GET(
   _: Request,
-  context: { params: Promise<{ simulation: FilmSimulation }> },
+  context: { params: Promise<{ simulation: string }> },
 ) {
-  const { simulation } = await context.params;
+  const { simulation } = await context.params as { simulation: FilmSimulation };
 
   const [
     photos,
@@ -35,7 +35,7 @@ export async function GET(
       width,
       height,
       fontFamily,
-    }}/>,
+    }} />,
     { width, height, fonts, headers },
   );
 }

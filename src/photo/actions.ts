@@ -45,7 +45,7 @@ import {
   BLUR_ENABLED,
 } from '@/site/config';
 import { generateAiImageQueries } from './ai/server';
-import { createStreamableValue } from 'ai/rsc';
+import { createStreamableValue } from '@ai-sdk/rsc';
 import { convertUploadToPhoto } from './storage';
 import { UrlAddStatus } from '@/admin/AdminUploadsClient';
 import { convertStringToArray } from '@/utility/string';
@@ -64,7 +64,7 @@ export const createPhotoAction = async (formData: FormData) =>
       urlOrigin: photo.url,
       shouldStripGpsData,
     });
-    
+
     if (updatedUrl) {
       photo.url = updatedUrl;
       await insertPhoto(photo);
@@ -366,7 +366,7 @@ export const syncPhotoAction = async (photoId: string) =>
           ...!photo.caption && { caption: aiCaption },
           ...photo.tags.length === 0 && { tags: aiTags },
           ...!photo.semanticDescription &&
-            { semanticDescription: aiSemanticDescription },
+          { semanticDescription: aiSemanticDescription },
         });
 
         await updatePhoto(photoFormDbInsert)

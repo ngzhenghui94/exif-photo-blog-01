@@ -1,6 +1,7 @@
 import { getPhotosCached } from '@/photo/cache';
-import Map from '@/components/Map';
+import MapClient from '@/components/MapClient';
 import SiteGrid from '@/components/SiteGrid';
+
 import { Metadata } from 'next';
 import { GEO_PRIVACY_ENABLED } from '@/site/config';
 
@@ -38,7 +39,7 @@ export default async function MapPage() {
               Explore the collection by location.
             </p>
           </div>
-          <Map photos={photos} />
+          <MapClient photos={photos} />
         </div>
       }
     />

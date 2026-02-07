@@ -35,43 +35,43 @@ import {
 import { createLensKey } from '@/lens';
 
 // Table key
-const KEY_PHOTOS            = 'photos';
-const KEY_PHOTO             = 'photo';
+const KEY_PHOTOS = 'photos';
+const KEY_PHOTO = 'photo';
 // Field keys
-const KEY_TAGS              = 'tags';
-const KEY_CAMERAS           = 'cameras';
-const KEY_LENSES            = 'lenses';
-const KEY_FILM_SIMULATIONS  = 'film-simulations';
-const KEY_FOCAL_LENGTHS     = 'focal-lengths';
+const KEY_TAGS = 'tags';
+const KEY_CAMERAS = 'cameras';
+const KEY_LENSES = 'lenses';
+const KEY_FILM_SIMULATIONS = 'film-simulations';
+const KEY_FOCAL_LENGTHS = 'focal-lengths';
 // Type keys
-const KEY_COUNT             = 'count';
-const KEY_HIDDEN            = 'hidden';
-const KEY_DATE_RANGE        = 'date-range';
+const KEY_COUNT = 'count';
+const KEY_HIDDEN = 'hidden';
+const KEY_DATE_RANGE = 'date-range';
 
 const getPhotosCacheKeyForOption = (
   options: GetPhotosOptions,
   option: keyof GetPhotosOptions,
 ): string | null => {
   switch (option) {
-  // Complex keys
-  case 'camera': {
-    const value = options[option];
-    return value ? `${option}-${createCameraKey(value)}` : null;
-  }
-  case 'lens': {
-    const value = options[option];
-    return value ? `${option}-${createLensKey(value)}` : null;
-  }
-  case 'takenBefore':
-  case 'takenAfterInclusive': 
-  case 'updatedBefore': {
-    const value = options[option];
-    return value ? `${option}-${value.toISOString()}` : null;
-  }
-  // Primitive keys
-  default:
-    const value = options[option];
-    return value !== undefined ? `${option}-${value}` : null;
+    // Complex keys
+    case 'camera': {
+      const value = options[option];
+      return value ? `${option}-${createCameraKey(value)}` : null;
+    }
+    case 'lens': {
+      const value = options[option];
+      return value ? `${option}-${createLensKey(value)}` : null;
+    }
+    case 'takenBefore':
+    case 'takenAfterInclusive':
+    case 'updatedBefore': {
+      const value = options[option];
+      return value ? `${option}-${value.toISOString()}` : null;
+    }
+    // Primitive keys
+    default:
+      const value = options[option];
+      return value !== undefined ? `${option}-${value}` : null;
   }
 };
 
@@ -90,16 +90,16 @@ const getPhotosCacheKeys = (options: GetPhotosOptions = {}) => {
 };
 
 export const revalidatePhotosKey = () =>
-  revalidateTag(KEY_PHOTOS);
+  revalidateTag(KEY_PHOTOS, {});
 
 export const revalidateTagsKey = () =>
-  revalidateTag(KEY_TAGS);
+  revalidateTag(KEY_TAGS, {});
 
 export const revalidateCamerasKey = () =>
-  revalidateTag(KEY_CAMERAS);
+  revalidateTag(KEY_CAMERAS, {});
 
 export const revalidateFilmSimulationsKey = () =>
-  revalidateTag(KEY_FILM_SIMULATIONS);
+  revalidateTag(KEY_FILM_SIMULATIONS, {});
 
 export const revalidateAllKeys = () => {
   revalidatePhotosKey();
@@ -119,7 +119,7 @@ export const revalidateAllKeysAndPaths = () => {
 
 export const revalidatePhoto = (photoId: string) => {
   // Tags
-  revalidateTag(photoId);
+  revalidateTag(photoId, {});
   revalidateTagsKey();
   revalidateCamerasKey();
   revalidateFilmSimulationsKey();

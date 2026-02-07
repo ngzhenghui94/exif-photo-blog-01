@@ -1,5 +1,5 @@
 import { generateText, streamText } from 'ai';
-import { createStreamableValue } from 'ai/rsc';
+import { createStreamableValue } from '@ai-sdk/rsc';
 import { createGroq } from '@ai-sdk/groq';
 import { kv } from '@vercel/kv';
 import { Ratelimit } from '@upstash/ratelimit';

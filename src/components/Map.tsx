@@ -12,19 +12,14 @@ import { pathForPhoto } from '@/site/paths';
 
 // Fix for default marker icons in Next.js
 // See: https://github.com/PaulLeCam/react-leaflet/issues/453
-const icon = L.icon({
-  iconUrl: '/favicons/light.png', // Using the site favicon as a simple marker for now, or fallback to default if I can fix it
+const icon = L.divIcon({
+  className: 'map-marker',
+  html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-red-500 drop-shadow-md">
+    <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+  </svg>`,
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
-});
-
-// Better fix for default icons:
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
 interface MapProps {
@@ -62,7 +57,10 @@ export default function Map({ photos }: MapProps) {
   const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
   // Filter photos with valid GPS
-  const validPhotos = photos.filter(p => p.latitude !== undefined && p.longitude !== undefined);
+  const validPhotos = photos.filter(p =>
+    p.latitude !== undefined && p.latitude !== null &&
+    p.longitude !== undefined && p.longitude !== null
+  );
 
   if (validPhotos.length === 0) {
     return (
@@ -94,6 +92,7 @@ export default function Map({ photos }: MapProps) {
           <Marker
             key={photo.id}
             position={[photo.latitude!, photo.longitude!]}
+            icon={icon}
           >
             <Popup className="min-w-[200px]">
               <div className="flex flex-col gap-2">
