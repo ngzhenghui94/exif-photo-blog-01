@@ -158,28 +158,17 @@ export default function PhotoLarge({
         )}>
           {/* Meta */}
           <div className="pr-2 md:pr-0">
-            <div className="md:relative flex items-start w-full">
-              <div className="flex-grow min-w-0 pr-12">
-                {hasTitle && (showTitleAsH1
-                  ? <h1>{renderPhotoLink()}</h1>
-                  : renderPhotoLink())}
-              </div>
-              <div className="flex gap-1 items-center z-10">
-                <button
-                  onClick={() => setIsDarkroomMode?.(prev => !prev)}
-                  className="text-icon opacity-50 hover:opacity-100 transition-opacity p-1"
-                  title="Toggle Darkroom Mode"
-                >
-                  {isDarkroomMode ? <TbBulb size={18} /> : <TbBulbOff size={18} />}
-                </button>
-                <div className="translate-y-[-4px]">
-                  <AdminPhotoMenuClient {...{
-                    photo,
-                    revalidatePhoto,
-                    includeFavorite: includeFavoriteInAdminMenu,
-                    ariaLabel: `Admin menu for '${titleForPhoto(photo)}' photo`,
-                  }} />
-                </div>
+            <div className="md:relative flex gap-2 items-start">
+              {hasTitle && (showTitleAsH1
+                ? <h1>{renderPhotoLink()}</h1>
+                : renderPhotoLink())}
+              <div className="absolute right-0 translate-y-[-4px] z-10">
+                <AdminPhotoMenuClient {...{
+                  photo,
+                  revalidatePhoto,
+                  includeFavorite: includeFavoriteInAdminMenu,
+                  ariaLabel: `Admin menu for '${titleForPhoto(photo)}' photo`,
+                }} />
               </div>
             </div>
             <div className="space-y-baseline">
@@ -270,6 +259,13 @@ export default function PhotoLarge({
                   ? 'translate-x-[-2.5px]'
                   : 'md:translate-x-[-2.5px]',
               )}>
+                <button
+                  onClick={() => setIsDarkroomMode?.(prev => !prev)}
+                  className="text-icon opacity-50 hover:opacity-100 transition-opacity p-1"
+                  title="Toggle Darkroom Mode"
+                >
+                  {isDarkroomMode ? <TbBulb size={18} /> : <TbBulbOff size={18} />}
+                </button>
                 {shouldShare &&
                   <ShareButton
                     photo={photo}
