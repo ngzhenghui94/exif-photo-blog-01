@@ -53,6 +53,12 @@ export default function AppStateProvider({
   const [shouldShowBaselineGrid, setShouldShowBaselineGrid] =
     useState(false);
 
+  // THEME
+  const [isDarkroomMode, setIsDarkroomMode] =
+    useState(false);
+  const [accentColor, setAccentColor] =
+    useState<string | undefined>();
+
   const invalidateSwr = useCallback(() => setSwrTimestamp(Date.now()), []);
 
   const { data } = useSWR('getAuth', getAuthAction);
@@ -65,7 +71,7 @@ export default function AppStateProvider({
       const timeout = setTimeout(() =>
         getPhotosHiddenMetaCachedAction().then(({ count }) =>
           setHiddenPhotosCount(count))
-      , 100);
+        , 100);
       return () => clearTimeout(timeout);
     } else {
       setHiddenPhotosCount(0);
@@ -74,7 +80,7 @@ export default function AppStateProvider({
 
   const registerAdminUpdate = useCallback(() =>
     setAdminUpdateTimes(updates => [...updates, new Date()])
-  , []);
+    , []);
 
   useEffect(() => {
     setHasLoaded?.(true);
@@ -120,6 +126,11 @@ export default function AppStateProvider({
         setShouldDebugImageFallbacks,
         shouldShowBaselineGrid,
         setShouldShowBaselineGrid,
+        // THEME
+        isDarkroomMode,
+        setIsDarkroomMode,
+        accentColor,
+        setAccentColor,
       }}
     >
       {children}

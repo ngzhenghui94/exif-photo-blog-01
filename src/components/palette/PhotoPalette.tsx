@@ -2,8 +2,9 @@
 
 import { toast } from 'sonner';
 import { extractPaletteFromImageAction } from '@/photo/paletteActions';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { clsx } from 'clsx/lite';
+import { useAppState } from '@/state/AppState';
 
 export default function PhotoPalette({
     photoUrl,
@@ -35,10 +36,25 @@ export default function PhotoPalette({
         }
     };
 
+
+
     const copyToClipboard = (color: string) => {
         navigator.clipboard.writeText(color);
         toast.success(`Copied ${color} to clipboard`);
     };
+
+    // Update global theme when palette changes
+    const { setAccentColor } = useAppState();
+    if (palette.length > 0 && setAccentColor) {
+        // Set the most dominant color (first one) as accent
+        // Use a timeout to avoid strict mode double-invoke issues during render
+        setTimeout(() => setAccentColor(palette[0]), 0);
+    }
+
+    // Clear accent color on unmount
+    useEffect(() => {
+        return () => setAccentColor?.(undefined);
+    }, [setAccentColor]);
 
     return (
         <div className="space-y-3">
@@ -49,7 +65,7 @@ export default function PhotoPalette({
                 {!palette.length && !isLoading && (
                     <button
                         onClick={handleGenerateValues}
-                        className="text-xs font-medium text-main hover:text-gray-900 dark:hover:text-white transition-colors"
+                        className="text-xs font-medium text-accent hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
                         GENERATE
                     </button>
@@ -70,7 +86,7 @@ export default function PhotoPalette({
             {!isLoading && palette.length > 0 && (
                 <div className="space-y-3 animate-fade-in">
                     {mood && (
-                        <p className="text-sm italic text-gray-600 dark:text-gray-300">
+                        <p className="text-sm italic text-accent opacity-80">
                             "{mood}"
                         </p>
                     )}

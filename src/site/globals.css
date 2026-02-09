@@ -206,3 +206,47 @@
       dark:md:bg-[repeating-linear-gradient(to_bottom,#222,#222_1px,transparent_1px,transparent_1.25rem)]
   }
 }
+
+/* Dynamic Themes */
+:root[style*="--theme-color"] .text-accent {
+  color: var(--theme-color);
+}
+
+:root[style*="--theme-color"] body {
+  /* Subtle tint using color-mix */
+  background-color: color-mix(in srgb, var(--theme-color) 4%, white);
+}
+
+.dark :root[style*="--theme-color"] body {
+  background-color: color-mix(in srgb, var(--theme-color) 8%, black);
+}
+
+/* Specific UI accents */
+:root[style*="--theme-color"] .button.primary {
+  background-color: var(--theme-color);
+  border-color: var(--theme-color);
+  color: white; /* Ensure text remains readable */
+}
+
+/* Darkroom Mode */
+body[data-darkroom-mode="true"] {
+  background-color: #000 !important;
+  color: #444;
+}
+
+body[data-darkroom-mode="true"] header,
+body[data-darkroom-mode="true"] footer,
+body[data-darkroom-mode="true"] nav, 
+body[data-darkroom-mode="true"] .admin-batch-edit-panel,
+body[data-darkroom-mode="true"] .command-k-trigger,
+body[data-darkroom-mode="true"] .site-grid-content-side {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+body[data-darkroom-mode="true"] .site-grid-content-main {
+  z-index: 50;
+  filter: none;
+}
+

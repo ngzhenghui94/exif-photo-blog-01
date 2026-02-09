@@ -20,6 +20,7 @@ import CommandK from '@/site/CommandK';
 import SwrConfigClient from '../state/SwrConfigClient';
 import AdminBatchEditPanel from '@/admin/AdminBatchEditPanel';
 import ShareModals from '@/share/ShareModals';
+import ThemeClient from '@/site/ThemeClient';
 
 import '../site/globals.css';
 import '../site/sonner.css';
@@ -107,9 +108,10 @@ export default function RootLayout({
             </ThemeProvider>
           </SwrConfigClient>
           <Analytics debug={false} />
-          <SpeedInsights debug={false}  />
+          <SpeedInsights debug={false} />
           <PhotoEscapeHandler />
           <ToasterWithThemes />
+          <ThemeClient />
         </AppStateProvider>
       </body>
     </html>

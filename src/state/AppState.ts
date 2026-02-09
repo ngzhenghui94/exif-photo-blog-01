@@ -39,6 +39,11 @@ export interface AppStateContext {
   setShouldDebugImageFallbacks?: Dispatch<SetStateAction<boolean>>
   shouldShowBaselineGrid?: boolean
   setShouldShowBaselineGrid?: Dispatch<SetStateAction<boolean>>
+  // THEME
+  isDarkroomMode?: boolean
+  setIsDarkroomMode?: Dispatch<SetStateAction<boolean>>
+  accentColor?: string
+  setAccentColor?: Dispatch<SetStateAction<string | undefined>>
 }
 
 export const AppStateContext = createContext<AppStateContext>({});
