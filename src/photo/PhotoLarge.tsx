@@ -35,6 +35,7 @@ import { useRef } from 'react';
 import useOnVisible from '@/utility/useOnVisible';
 import PhotoDate from './PhotoDate';
 import { useAppState } from '@/state/AppState';
+import PhotoPalette from '@/components/palette/PhotoPalette';
 
 export default function PhotoLarge({
   photo,
@@ -128,7 +129,7 @@ export default function PhotoLarge({
         >
           <div className={clsx(
             arePhotosMatted &&
-              'flex items-center justify-center w-full',
+            'flex items-center justify-center w-full',
             arePhotosMatted && photo.aspectRatio >= 1
               ? 'h-[80%]'
               : 'h-[90%]',
@@ -172,7 +173,7 @@ export default function PhotoLarge({
             <div className="space-y-baseline">
               {photo.caption &&
                 <div className={clsx(
-                  'uppercase', 
+                  'uppercase',
                   // Prevent collision with admin button
                   isUserSignedIn && 'md:pr-7',
                 )}>
@@ -263,20 +264,26 @@ export default function PhotoLarge({
                     tag={shouldShareTag ? primaryTag : undefined}
                     camera={shouldShareCamera ? camera : undefined}
                     // eslint-disable-next-line max-len
-                    simulation={shouldShareSimulation? photo.filmSimulation : undefined}
+                    simulation={shouldShareSimulation ? photo.filmSimulation : undefined}
                     // eslint-disable-next-line max-len
                     focal={shouldShareFocalLength ? photo.focalLength : undefined}
                     prefetch={prefetchRelatedLinks}
                   />}
-                {ALLOW_PUBLIC_DOWNLOADS && 
-                  <DownloadButton 
+                {ALLOW_PUBLIC_DOWNLOADS &&
+                  <DownloadButton
                     className={clsx(
                       'translate-y-[0.5px] md:translate-y-0',
                     )}
-                    photo={photo} 
+                    photo={photo}
                   />}
               </div>
             </div>
+
+            {/* Palette Extraction */}
+            <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
+              <PhotoPalette photoUrl={photo.url} />
+            </div>
+
           </div>
         </DivDebugBaselineGrid>}
     />

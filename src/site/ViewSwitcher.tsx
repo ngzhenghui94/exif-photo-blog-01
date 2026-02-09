@@ -8,7 +8,7 @@ import {
   PATH_GRID_INFERRED,
   PATH_MAP,
 } from '@/site/paths';
-import { BiLockAlt, BiMap } from 'react-icons/bi';
+import { BiLockAlt, BiMapAlt } from 'react-icons/bi';
 import IconSearch from './IconSearch';
 import { useAppState } from '@/state/AppState';
 import { GRID_HOMEPAGE_ENABLED } from './config';
@@ -42,7 +42,7 @@ export default function ViewSwitcher({
 
   const renderItemMap = () =>
     <SwitcherItem
-      icon={<BiMap size={18} />}
+      icon={<BiMapAlt size={20} className="translate-y-[0.5px]" />}
       href={PATH_MAP}
       active={currentSelection === 'map'}
       noPadding
