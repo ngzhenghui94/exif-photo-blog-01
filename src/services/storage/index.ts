@@ -76,13 +76,16 @@ const PREFIX_PHOTO = 'photo';
 export const generateRandomFileNameForPhoto = () =>
   `${PREFIX_PHOTO}-${generateStorageId()}`;
 
+export const generateRandomFileNameForUpload = (extension = 'jpg') =>
+  `${PREFIX_UPLOAD}-${generateStorageId()}.${extension}`;
+
 const REGEX_UPLOAD_PATH = new RegExp(
-  `(?:${PREFIX_UPLOAD})\.[a-z]{1,4}`,
+  `^${PREFIX_UPLOAD}-[a-z0-9]+\\.[a-z]{1,4}$`,
   'i',
 );
 
 const REGEX_UPLOAD_ID = new RegExp(
-  `.${PREFIX_UPLOAD}-([a-z0-9]+)\.[a-z]{1,4}$`,
+  `${PREFIX_UPLOAD}-([a-z0-9]+)\\.[a-z]{1,4}$`,
   'i',
 );
 
@@ -134,7 +137,10 @@ export const uploadPhotoFromClient = async (
   CURRENT_STORAGE === 'aws-s3'
 )
   ? uploadFromClientViaPresignedUrl(file, PREFIX_UPLOAD, extension, true)
-  : vercelBlobUploadFromClient(file, `${PREFIX_UPLOAD}.${extension}`);
+  : vercelBlobUploadFromClient(
+    file,
+    generateRandomFileNameForUpload(extension),
+  );
 
 export const putFile = (
   file: Buffer,
